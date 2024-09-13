@@ -1,57 +1,74 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
-
-
-
-//create your first component
+// Crea tu primer componente
 const Home = () => {
+    const [nuevoTodo, setNuevoTodo] = useState("");
+    const [todos, setTodos] = useState([]);
 
-	//let nuevoTodo = "Tarea de ejemplo";
-	 const [nuevoTodo, setNuevoTodo] = useState("Tarea de ejemplo");
-	 const [todos, setTodos] = useState (["Una tarea de prueba", "Dos tareas de prueba"]);
+    const handleClick = () => {
+        if (nuevoTodo.trim() === "") return;
 
-const handleClick = () => {
-	console.log("Nueva tarea", nuevoTodo);
+        console.log("Nueva tarea", nuevoTodo);
+       
+        setTodos([...todos, { label: nuevoTodo, is_done: false, id: todos.length }]);
+        setNuevoTodo("");
+    };
 
-	setTodos([...todos, nuevoTodo])
-}
+    const deleteTodo = (indice) => {
+        const listaNueva = todos.filter((_, i) => i !== indice);
+        setTodos(listaNueva);
+    };
 
-const deleteTodo = (indice) => {
+    const loadTodos = async () => {
+        try {
+            const response = await fetch("https://playground.4geeks.com/todo/users/juancarlosdiaz");
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            const data = await response.json();
+            console.log("Datos de la API:", data);
+            setTodos(data.todos || []);
+        } catch (error) {
+            console.error("Hubo un problema con la solicitud:", error);
+        }
+    };
 
-	const listaNueva = todos.filter((todo, i) => i !== indice)
-	setTodos(listaNueva);
+    useEffect(() => {
+        loadTodos();
+    }, []);
 
-}
+    const handleChange = (evento) => {
+        setNuevoTodo(evento.target.value);
+    };
 
-const handleChange = (evento) => {
-	
-	setNuevoTodo(event.target.value);
-
-}
-
-	return (
-		<div className="text-center">
-			<h1 className="text-center mt-5">To do list Usando React + Fetch</h1>
-				<div>
-					<input type = "text" onChange={handleChange}/>
-					<button onClick={handleClick}>
-						Agregar tarea
-					</button>
-				</div>
-				<p>Nueva tarea: {nuevoTodo}</p>
-				<ul>
-					{todos.map((todo, indice) => {
-						return (
-							<li>
-								{todo} <button onClick={() => deleteTodo(indice) } >Borrar</button>
-							</li>
-						)
-					})}
-				</ul>
-		</div>
-	);
+    return (
+        <div className="text-center">
+            <h1 className="text-center mt-5">To do list Usando React + Fetch</h1>
+            <div>
+                <input 
+                    type="text" 
+                    value={nuevoTodo} 
+                    onChange={handleChange} 
+                    placeholder="Agregar nueva tarea"
+                />
+                <button onClick={handleClick}>
+                    Agregar tarea
+                </button>
+            </div>
+            <p>Nueva tarea: {nuevoTodo}</p>
+            <ul>
+                {todos.length > 0 ? (
+                    todos.map((todo, indice) => (
+                        <li key={todo.id}>
+                            {todo.label} <button onClick={() => deleteTodo(indice)}>Borrar</button>
+                        </li>
+                    ))
+                ) : (
+                    <p>No hay tareas</p>
+                )}
+            </ul>
+        </div>
+    );
 };
 
 export default Home;
