@@ -5,11 +5,26 @@ const Home = () => {
     const [nuevoTodo, setNuevoTodo] = useState("");
     const [todos, setTodos] = useState([]);
 
-    const handleClick = () => {
+    const handleClick = async () => {
         if (nuevoTodo.trim() === "") return;
 
         console.log("Nueva tarea", nuevoTodo);
-       
+
+        const responseUser = await fetch("https://playground.4geeks.com/todo/todos/juancarlosdiaz",{
+            method:"POST", 
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+            
+              //make sure to serialize your JSON body
+              body: JSON.stringify({
+                label: nuevoTodo, is_done: false, id: todos.length 
+                
+              })
+        });
+        if (responseUser.ok){
+        }
         setTodos([...todos, { label: nuevoTodo, is_done: false, id: todos.length }]);
         setNuevoTodo("");
     };
@@ -23,7 +38,13 @@ const Home = () => {
         try {
             const response = await fetch("https://playground.4geeks.com/todo/users/juancarlosdiaz");
             if (!response.ok) {
-                throw new Error("Network response was not ok");
+                //throw new Error("Network response was not ok");
+                const responseUser = await fetch("https://playground.4geeks.com/todo/users/juancarlosdiaz",{
+                    method:"POST"
+                });
+                if (responseUser.ok){
+                    loadTodos()
+                }
             }
             const data = await response.json();
             console.log("Datos de la API:", data);
