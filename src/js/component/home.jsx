@@ -75,7 +75,7 @@ const Home = () => {
 
         return (
             <div className="text-center">
-                <h1 className="text-center mt-5">To do list Usando React + Fetch</h1>
+                <h1 className="text-center mt-5 border ">To do list Usando React + Fetch</h1>
                 <div>
                     <input
                         type="text"
@@ -83,7 +83,7 @@ const Home = () => {
                         onChange={handleChange}
                         placeholder="Agregar nueva tarea"
                     />
-                    <button onClick={handleClick}>
+                    <button className="bg-success" onClick={handleClick}>
                         Agregar tarea
                     </button>
                 </div>
@@ -92,7 +92,7 @@ const Home = () => {
                     {todos.length > 0 ? (
                         todos.map((todo) => (
                             <li key={todo.id}>
-                                {todo.label} <button onClick={() => deleteTodo(todo.id)}>Borrar</button>
+                                {todo.label} <button className="bg-success" onClick={() => deleteTodo(todo.id)}>Borrar</button>
                             </li>
                         ))
                     ) : (
